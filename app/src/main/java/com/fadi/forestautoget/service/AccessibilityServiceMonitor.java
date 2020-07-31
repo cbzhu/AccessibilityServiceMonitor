@@ -13,6 +13,7 @@ import android.os.Message;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
 
 import com.fadi.forestautoget.MyApplication;
@@ -62,8 +63,8 @@ public class AccessibilityServiceMonitor extends AccessibilityService {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate");
-        myBroadCast = new MyBroadCast();
-        myBroadCast.init(this);
+//        myBroadCast = new MyBroadCast();
+//        myBroadCast.init(this);
     }
 
     @Override
@@ -75,13 +76,13 @@ public class AccessibilityServiceMonitor extends AccessibilityService {
         String action = intent.getAction();
         Log.d(TAG, "onStartCommand Aciton: " + action);
 
-        if (ACTION_UPDATE_SWITCH.equals(action)) {
+/*        if (ACTION_UPDATE_SWITCH.equals(action)) {
             updateSwitchStatus();
         } else if (ACTION_ALAM_TIMER.equals(action)) {
             MyApplication.startAlarmTask(this);
             startUI();
-        }
-
+        }*/
+       startUI();
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -90,14 +91,14 @@ public class AccessibilityServiceMonitor extends AccessibilityService {
     @Override
     protected void onServiceConnected() {
         super.onServiceConnected();
-        AccessibilityServiceInfo serviceInfo = new AccessibilityServiceInfo();
-        serviceInfo.eventTypes = AccessibilityEvent.TYPES_ALL_MASK;
-        serviceInfo.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC;
-        //serviceInfo.packageNames = new String[]{"com.gotokeep.keep", "com.eg.android.AlipayGphone", "com.sinovatech.unicom.ui", "com.tencent.mm"};// 监控的app
-        serviceInfo.packageNames = new String[]{ "com.anjuke.android.app"};// 监控的app
-        serviceInfo.notificationTimeout = 100;
-        serviceInfo.flags = serviceInfo.flags | AccessibilityServiceInfo.FLAG_REQUEST_ENHANCED_WEB_ACCESSIBILITY;
-        setServiceInfo(serviceInfo);
+//        AccessibilityServiceInfo serviceInfo = new AccessibilityServiceInfo();
+//        serviceInfo.eventTypes = AccessibilityEvent.TYPES_ALL_MASK;
+//        serviceInfo.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC;
+//        //serviceInfo.packageNames = new String[]{"com.gotokeep.keep", "com.eg.android.AlipayGphone", "com.sinovatech.unicom.ui", "com.tencent.mm"};// 监控的app
+//        serviceInfo.packageNames = new String[]{ "com.cebbank.ciap"};// 监控的app
+//        serviceInfo.notificationTimeout = 100;
+//        serviceInfo.flags = serviceInfo.flags | AccessibilityServiceInfo.FLAG_REQUEST_ENHANCED_WEB_ACCESSIBILITY;
+//        setServiceInfo(serviceInfo);
     }
 
     @Override
@@ -116,29 +117,39 @@ public class AccessibilityServiceMonitor extends AccessibilityService {
         switch (eventType) {
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
             case AccessibilityEvent.TYPE_VIEW_SCROLLED:
-                if (isKeepEnable) {
-                    KeepAppMonitor.policy(getRootInActiveWindow(), packageName, className);
-                }
-
                 if (isAlipayForest) {
+
+                    //CebbankAppMonitor.policy(getRootInActiveWindow(), packageName, className);
+
+                    //获取当前页面
+
+
+                    //点击 极客
+
+                    AlipayForestMonitor.jike(getRootInActiveWindow());
+
+
+
+
+                    //进入地标派单
+                    AlipayForestMonitor.dibiaopaidian(getRootInActiveWindow());
+
+                    //进入中端数据抢单
+                    AlipayForestMonitor.zhongduan(getRootInActiveWindow());
+
+
                     AlipayForestMonitor.enterForestUI(getRootInActiveWindow());
-                    if (isNewday) {
-                        AlipayForestMonitor.enterForestUI(getRootInActiveWindow());
-                    }
 
-                    AlipayForestMonitor.policy(getRootInActiveWindow(), packageName, className);
-                }
+                    AlipayForestMonitor.clickAll(getRootInActiveWindow());
 
-                if (isLiangTongEnable) {
-                    if (isNewday) {
-                        LiangTongMonitor.startLiangTongQianDaoUI(getRootInActiveWindow(), packageName, className);
-                    }
+                    //未到抢单时间，请稍后再试   确实
+                    AlipayForestMonitor.enter(getRootInActiveWindow());
 
-                    LiangTongMonitor.policy(getRootInActiveWindow(), packageName, className);
-                }
+                    //进入高端数据抢单
+                   // AlipayForestMonitor.gaoduan(getRootInActiveWindow());
 
-                if (isWeChatMotionEnable) {
-                    WeChatMotionMonitor.policy(getRootInActiveWindow(), packageName, className);
+
+
                 }
                 break;
 
@@ -179,6 +190,7 @@ public class AccessibilityServiceMonitor extends AccessibilityService {
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            context.unregisterReceiver(this);
             if (null == intent) {
                 return;
             }
@@ -225,6 +237,11 @@ public class AccessibilityServiceMonitor extends AccessibilityService {
 
         Log.d(Config.TAG, "isNewDay = " + result);
         return result;
+    }
+
+    public AccessibilityNodeInfo retGetView(){
+        AccessibilityNodeInfo ss = getRootInActiveWindow();
+        return  ss;
     }
 
 

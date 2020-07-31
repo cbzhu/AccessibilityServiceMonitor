@@ -13,5 +13,8 @@
     android:canRequestEnhancedWebAccessibility="true"
     android:canRetrieveWindowContent="true"
     android:notificationTimeout="100"
-    android:packageNames="com.cebbank.ciap"
-    android:settingsActivity="com.cebbank.ciap.ui.MainManagerActivity" />
+    android:packageNames="com.cebbank.ciap" />
+
+
+
+    <!--android:settingsActivity="com.cebbank.ciap.activity.GuideActivity"-->

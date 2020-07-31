@@ -4,7 +4,6 @@
     package="com.fadi.forestautoget">
 
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -35,13 +34,12 @@
 
             <meta-data
                 android:name="android.accessibilityservice"
-                android:resource="@xml/accessibility_config">
-
+                android:resource="@xml/accessibility_config_1">
             </meta-data>
-
-
-
         </service>
+
+
+
 
     </application>
 
